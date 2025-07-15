@@ -30,7 +30,7 @@ public class PurchaseService {
         user.setName(user.getName());
         user.setRole(user.getRole());
         user.setPassword(user.getPassword());
-        
+
 
         Book book = bookRepo.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book not found"));

@@ -18,7 +18,7 @@ public class PurchaseController {
 
     private final BookService bookService;
     private final PurchaseService purchaseService;
-    
+
     @PostMapping
     public ResponseEntity<?> purchaseBook(
             @RequestParam String email,
