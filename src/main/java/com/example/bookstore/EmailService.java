@@ -1,6 +1,7 @@
 package com.example.bookstore;
 
 import com.example.bookstore.entity.Book;
+import com.example.bookstore.entity.Purchase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -38,20 +39,20 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    public void sendPurchaseConfirmation(String recipient, Book book, int purchasedQuantity, int remainingQuantity) {
-        SimpleMailMessage message = new SimpleMailMessage();
+//    public void sendPurchaseConfirmation(String recipient, Book book, int purchasedQuantity, int remainingQuantity) {
+public void sendPurchaseConfirmation(String recipient, Purchase purchase, int remainingQuantity){
+    SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recipient);
         message.setSubject("📚 Book Purchase Confirmation");
 
-        message.setText("Thank you for your purchase!\n\n" +
-                "Book: " + book.getTitle() + "\n" +
-                "Quantity Purchased: " + purchasedQuantity + "\n" +
-                "Quantity Remaining in Store: " + remainingQuantity + "\n" +
-                "Total Price: ₹" + (book.getPrice() * purchasedQuantity) + "\n\n" +
-                "📬 Happy Reading!\n\n" +
-                "Keep visiting the store :)");
+    message.setText("Thank you for your purchase!\n\n" +
+            "Book: " + purchase.getBookTitle() + "\n" +
+            "Quantity Purchased: " + purchase.getQuantityPurchased() + "\n" +
+            "Quantity Remaining in Store: " + remainingQuantity + "\n" +
+            "Total Price: ₹" + purchase.getPrice() + "\n\n" +
+            "📬 Happy Reading!\n\n" + "Keep visiting the store :)");
 
-        mailSender.send(message);
+    mailSender.send(message);
     }
 
 }

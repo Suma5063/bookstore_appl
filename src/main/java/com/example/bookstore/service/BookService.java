@@ -84,17 +84,14 @@ public class BookService {
         Book book = bookRepo.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book not found"));
 
-        // ❗ Check stock
         if (book.getQuantity() < quantity) {
             throw new RuntimeException("Not enough stock! Only " + book.getQuantity() + " left.");
         }
 
-        // 📉 Update stock
         int remainingQuantity = book.getQuantity() - quantity;
         book.setQuantity(remainingQuantity);
         bookRepo.save(book);
 
-        // 🧾 Create and save purchase
         Purchase purchase = new Purchase();
         purchase.setUserId(user.getId());
         purchase.setUserEmail(user.getEmail());
@@ -106,14 +103,13 @@ public class BookService {
         purchaseRepo.save(purchase);
 
         // 📧 Send emails
-        emailService.sendPurchaseConfirmation(email, book, quantity, remainingQuantity); // to buyer
-        emailService.sendPurchaseConfirmation("suma@mailinator.com", book, quantity, remainingQuantity); // to admin
+        emailService.sendPurchaseConfirmation(email, purchase, remainingQuantity);
+        emailService.sendPurchaseConfirmation("suma@mailinator.com", purchase, remainingQuantity);
         emailService.sendSimpleMail(
                 "suma@mailinator.com",
                 "📦 Book Sold",
                 book.getTitle() + " x" + quantity + " bought by " + user.getEmail()
         );
-
         return purchase;
     }
 

@@ -2,10 +2,13 @@ package com.example.bookstore.controller;
 
 import com.example.bookstore.EmailService;
 import com.example.bookstore.entity.Book;
+import com.example.bookstore.entity.Purchase;
+import com.example.bookstore.repository.PurchaseRepository;
 import com.example.bookstore.service.BookQueueService;
 import com.example.bookstore.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +22,9 @@ public class BookController {
 
     @Autowired
     private BookQueueService bookQueueService;
+
+    @Autowired
+    private final PurchaseRepository purchaseRepository;
 
     @Autowired private EmailService emailService;
 
@@ -82,4 +88,20 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAll());
     }
 
+//    @GetMapping("/all")
+//    public ResponseEntity<?> getAllPurchases() {
+//        try {
+//            List<Purchase> purchases = purchaseRepository.findAll();
+//
+//            if (purchases.isEmpty()) {
+//                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No purchases found.");
+//            }
+//
+//            return ResponseEntity.ok(purchases);
+//
+//        } catch (Exception ex) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("An error occurred while fetching purchases: " + ex.getMessage());
+//        }
+//    }
 }

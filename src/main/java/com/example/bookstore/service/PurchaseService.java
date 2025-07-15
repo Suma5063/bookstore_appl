@@ -25,7 +25,8 @@ public class PurchaseService {
     public Purchase purchaseBook(String email, String bookId, int quantity) {
         userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
-        User user = new User();
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
         user.setEmail(user.getEmail());
         user.setName(user.getName());
         user.setRole(user.getRole());
@@ -58,8 +59,8 @@ public class PurchaseService {
         purchaseRepo.save(purchase);
 
         // 📧 Send confirmation email
-        emailService.sendPurchaseConfirmation(email, book, quantity, remainingQuantity); // to buyer
-        emailService.sendPurchaseConfirmation("suma@mailinator.com", book, quantity, remainingQuantity); // to admin
+        emailService.sendPurchaseConfirmation(email, purchase, remainingQuantity);
+        emailService.sendPurchaseConfirmation("suma@mailinator.com", purchase, remainingQuantity);
         emailService.sendSimpleMail(
                 "suma@mailinator.com",
                 "📦 Book Sold",
