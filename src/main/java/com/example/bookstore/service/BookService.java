@@ -77,29 +77,42 @@ public class BookService {
 
 
     public Purchase purchaseBook(String email, String bookId, int quantity) {
-        User user = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-        Book book = bookRepo.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
+        // 🔍 Fetch user and book
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        Book book = bookRepo.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        // ❗ Check stock
         if (book.getQuantity() < quantity) {
-            throw new RuntimeException("Not enough stock");
+            throw new RuntimeException("Not enough stock! Only " + book.getQuantity() + " left.");
         }
 
-        book.setQuantity(book.getQuantity() - quantity);
+        // 📉 Update stock
+        int remainingQuantity = book.getQuantity() - quantity;
+        book.setQuantity(remainingQuantity);
         bookRepo.save(book);
 
+        // 🧾 Create and save purchase
         Purchase purchase = new Purchase();
         purchase.setUserId(user.getId());
         purchase.setUserEmail(user.getEmail());
         purchase.setBookId(book.getId());
         purchase.setBookTitle(book.getTitle());
-        purchase.setPrice(book.getPrice() * quantity);
+        purchase.setPrice(book.getPrice() * quantity); // total cost
         purchase.setQuantityPurchased(quantity);
         purchase.setPurchaseTime(LocalDateTime.now());
         purchaseRepo.save(purchase);
 
-        emailService.sendPurchaseConfirmation(user.getEmail(), book, book.getQuantity());
-        emailService.sendSimpleMail("admin@gmail.com", "📦 Book Sold",
-                book.getTitle() + " x" + quantity + " bought by " + user.getEmail());
+        // 📧 Send emails
+        emailService.sendPurchaseConfirmation(email, book, quantity, remainingQuantity); // to buyer
+        emailService.sendPurchaseConfirmation("suma@mailinator.com", book, quantity, remainingQuantity); // to admin
+        emailService.sendSimpleMail(
+                "suma@mailinator.com",
+                "📦 Book Sold",
+                book.getTitle() + " x" + quantity + " bought by " + user.getEmail()
+        );
 
         return purchase;
     }

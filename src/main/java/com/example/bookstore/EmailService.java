@@ -38,16 +38,17 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    public void sendPurchaseConfirmation(String recipient, Book book, int quantity) {
+    public void sendPurchaseConfirmation(String recipient, Book book, int purchasedQuantity, int remainingQuantity) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recipient);
         message.setSubject("📚 Book Purchase Confirmation");
 
         message.setText("Thank you for your purchase!\n\n" +
                 "Book: " + book.getTitle() + "\n" +
-                "Quantity remaining in the store: " + quantity + "\n" +
-                "Total Price: ₹" + (book.getPrice() * quantity) + "\n\n" +
-                "📬 Happy Reading!\n\n"+
+                "Quantity Purchased: " + purchasedQuantity + "\n" +
+                "Quantity Remaining in Store: " + remainingQuantity + "\n" +
+                "Total Price: ₹" + (book.getPrice() * purchasedQuantity) + "\n\n" +
+                "📬 Happy Reading!\n\n" +
                 "Keep visiting the store :)");
 
         mailSender.send(message);
