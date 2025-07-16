@@ -10,18 +10,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/purchases")
 @RequiredArgsConstructor
 public class PurchaseController {
 
-    private final BookService bookService;
-    private final PurchaseService purchaseService;
+    @Autowired
+    private  BookService bookService;
 
     @Autowired
-    private final PurchaseRepository purchaseRepository;
+    private  PurchaseService purchaseService;
+
+    @Autowired
+    private PurchaseRepository purchaseRepository;
 
     @PostMapping
     public ResponseEntity<?> purchaseBook(
@@ -40,19 +41,32 @@ public class PurchaseController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllPurchases() {
-        try {
-            List<Purchase> purchases = purchaseRepository.findAll();
+        return purchaseService.getAllPurchases();
+    }
 
-            if (purchases.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No purchases found.");
-            }
+    @GetMapping("/user")
+    public ResponseEntity<?> getPurchasesByEmail(@RequestParam String email) {
+        return purchaseService.getPurchasesByEmail(email);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePurchase(@PathVariable String id) {
+        return purchaseService.deletePurchaseById(id);
+    }
+    @GetMapping("/between")
+    public ResponseEntity<?> getPurchasesBetweenDates(
+            @RequestParam String from,
+            @RequestParam String to
+    ) {        return purchaseService.getPurchasesBetweenDates(from, to);
+    }
 
-            return ResponseEntity.ok(purchases);
+    @GetMapping("/top-sold")
+    public ResponseEntity<?> getTopSoldBooks(@RequestParam(defaultValue = "5") int limit) {
+        return purchaseService.getTopSoldBooks(limit);
+    }
 
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while fetching purchases: " + ex.getMessage());
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Purchase> getPurchaseById(@PathVariable String id) {
+        return ResponseEntity.ok(purchaseService.getPurchaseOrThrow(id));
     }
 
 }

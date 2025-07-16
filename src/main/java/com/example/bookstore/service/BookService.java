@@ -9,6 +9,9 @@ import com.example.bookstore.repository.PurchaseRepository;
 import com.example.bookstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -111,6 +114,23 @@ public class BookService {
                 book.getTitle() + " x" + quantity + " bought by " + user.getEmail()
         );
         return purchase;
+    }
+
+    // In BookService
+    public Page<Book> getBooksPaged(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return bookRepo.findAll(pageable);
+    }
+
+    // In BookService
+    public List<Book> searchByKeyword(String keyword) {
+        return bookRepo.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(keyword, keyword);
+    }
+
+    public String getTitleById(String bookId) {
+        return getById(bookId) // Assuming getById returns Optional<Book>
+                .map(Book::getTitle)
+                .orElse("Unknown Title");
     }
 
 }

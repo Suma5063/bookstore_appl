@@ -16,4 +16,7 @@ public interface BookRepository extends MongoRepository<Book, String> {
 
     List<Book> findByCreatedDateBefore(LocalDate date);
 
+    // In BookRepository
+    List<Book> findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String author);
+
 }

@@ -8,6 +8,7 @@ import com.example.bookstore.service.BookQueueService;
 import com.example.bookstore.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -88,20 +89,17 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAll());
     }
 
-//    @GetMapping("/all")
-//    public ResponseEntity<?> getAllPurchases() {
-//        try {
-//            List<Purchase> purchases = purchaseRepository.findAll();
-//
-//            if (purchases.isEmpty()) {
-//                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No purchases found.");
-//            }
-//
-//            return ResponseEntity.ok(purchases);
-//
-//        } catch (Exception ex) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("An error occurred while fetching purchases: " + ex.getMessage());
-//        }
-//    }
+    @GetMapping("/paged")
+    public Page<Book> getBooksPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title") String sortBy) {
+        return bookService.getBooksPaged(page, size, sortBy);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Book>> searchBooks(
+            @RequestParam String keyword) {
+        return ResponseEntity.ok(bookService.searchByKeyword(keyword));
+    }
 }
