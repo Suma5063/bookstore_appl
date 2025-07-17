@@ -1,0 +1,30 @@
+name: Test Workflow
+
+on:
+  push:
+    branches:
+      - '**'         # All branches
+    tags:
+      - '**'         # All tags
+
+jobs:
+  test:
+    name: Testing GitHub Actions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛒 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🧾 Print GitHub Context
+        run: |
+          echo "Triggered by event: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+
+      - name: 💬 Hello from GitHub Actions!
+        run: |
+          echo "Hello, Suma! You successfully triggered a GitHub workflow."
+          date
